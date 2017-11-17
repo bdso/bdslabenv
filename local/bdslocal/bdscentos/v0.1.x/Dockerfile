@@ -22,6 +22,7 @@ RUN curl -L -O -H "Cookie: gpw_e24=http://www.oracle.com/; oraclelicense=accept-
   # && yum -y install jdk-8u131-linux-x64.rpm \
   && rpm -ivh jdk-8u131-linux-x64.rpm \
   && rm -rf jdk-8u131-linux-x64.rpm \
+  && yum -y install gcc make \
   && yum -y install net-tools && yum clean all && rm -rf /tmp/* /var/tmp/* && rm -rf /var/cache/*
 # Check java.
 RUN ["java","-version"]
@@ -93,7 +94,7 @@ EXPOSE $KAFKA_PORT $KAFKA_JMX_PORT
 # Arguments elasticsearch version.
 ARG ELASTIC_MAJOR=5
 ARG ELASTIC_UPDATE=4
-ARG ELASTIC_BUILD=1
+ARG ELASTIC_BUILD=3
 ARG ELASTIC_VERSION=${ELASTIC_MAJOR}.${ELASTIC_UPDATE}.${ELASTIC_BUILD}
 ARG ELASTIC_PORT=9200
 ARG ELASTIC_TRANSPORT_PORT=9300
@@ -112,7 +113,7 @@ EXPOSE $ELASTIC_PORT $ELASTIC_TRANSPORT_PORT
 # Arguments kibana version.
 ARG KIBANA_MAJOR=5
 ARG KIBANA_UPDATE=4
-ARG KIBANA_BUILD=1
+ARG KIBANA_BUILD=3
 ARG KIBANA_VERSION=${KIBANA_MAJOR}.${KIBANA_UPDATE}.${KIBANA_BUILD}
 ARG KIBANA_PORT=5601
 # Set ENV kibana.
@@ -133,6 +134,33 @@ RUN set -x \
 	&& grep -q "^elasticsearch\.url: 'http://localhost:9200'\$" $KIBANA_HOME/config/kibana.yml
 EXPOSE $KIBANA_PORT
 
+#########################################################################################################
+# Arguments redis version.
+ARG REDIS_LINK=http://download.redis.io/releases
+ARG REDIS_MAJOR=4
+ARG REDIS_UPDATE=0
+ARG REDIS_BUILD=2
+ARG REDIS_VERSION=${REDIS_MAJOR}.${REDIS_UPDATE}.${REDIS_BUILD}
+ARG REDIS_PORT=6379
+# Set ENV redis.
+ENV REDIS_HOME=$DIR_HOME/redis-${REDIS_VERSION}
+ENV PATH $PATH:$REDIS_HOME/src
+# Install kibana.
+RUN curl -L -O ${REDIS_LINK}/redis-${REDIS_VERSION}.tar.gz \
+  && tar -zxf redis-${REDIS_VERSION}.tar.gz \
+  && rm -rf redis-${REDIS_VERSION}.tar.gz \
+  && cd redis-${REDIS_VERSION} && make
+# && make test
+# Config redis
+
+USER root
+RUN yum remove -y gcc make cpp glibc-devel glibc-headers libgomp libmpc mpfr \
+  && yum clean all && rm -rf /tmp/* /var/tmp/* && rm -rf /var/cache/*
+USER $USER_BDS
+
+EXPOSE $REDIS_PORT
+
+#########################################################################################################
 COPY script.d $DIR_HOME/script.d
 COPY docker-entrypoint.sh $DIR_HOME
 ENTRYPOINT ["/opt/src/docker-entrypoint.sh"]
