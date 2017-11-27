@@ -22,3 +22,16 @@ services:
       KAFKA_PORT: 9092
       KAFKA_CREATE_TOPICS: "bdslab:1:1"
       KAFKA_ZOOKEEPER_CONNECT: localhost:2181
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 3072M
+        reservations:
+          cpus: '0.30'
+          memory: 2048M
+        # restart_policy:
+        #   condition: on-failure
+        #   delay: 5s
+        #   max_attempts: 3
+        #   window: 120s
