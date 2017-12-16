@@ -49,9 +49,9 @@ EXPOSE $ZOO_PORT
 
 #########################################################################################################
 # Arguments kafka version.
-ARG KAFKA_MAJOR=0.8
-ARG KAFKA_UPDATE=2
-ARG KAFKA_BUILD=2
+ARG KAFKA_MAJOR=1
+ARG KAFKA_UPDATE=0
+ARG KAFKA_BUILD=0
 ARG KAFKA_SBT=2.11
 ARG KAFKA_PORT=9092
 ARG KAFKA_JMX_PORT=9090

@@ -2,7 +2,7 @@ version: '3'
 services: 
   bdslocal:
     hostname: bdscentos
-    image: "leophan/bdscentos:0.2.0"
+    image: "leophan/bdscentos:0.2.2"
     ports:
      - "2181:2181"
      - "9092:9092"
