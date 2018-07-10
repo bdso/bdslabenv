@@ -163,5 +163,5 @@ EXPOSE $REDIS_PORT
 #########################################################################################################
 COPY script.d $DIR_HOME/script.d
 COPY docker-entrypoint.sh $DIR_HOME
-ENTRYPOINT ["/opt/src/docker-entrypoint.sh"]
+ENTRYPOINT ["bash","/opt/src/docker-entrypoint.sh"]
 # CMD ["/opt/src/docker-entrypoint.sh"]

@@ -106,6 +106,10 @@ RUN curl -L -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearc
   && tar -zxf elasticsearch-${ELASTIC_VERSION}.tar.gz \
   && rm -rf elasticsearch-${ELASTIC_VERSION}.tar.gz
 # Config elasticsearch
+RUN set -x \
+# The default "Xms2g, Xms2g" is "Xms1g, Xms1g" in 5+
+	&& sed -ri "s|-Xms2g|-Xms1g|" $ELASTIC_HOME/config/jvm.options \
+  && sed -ri "s|-Xmx2g|-Xmx1g|" $ELASTIC_HOME/config/jvm.options
 COPY conf.d/elasticsearch $ELASTIC_HOME/config
 EXPOSE $ELASTIC_PORT $ELASTIC_TRANSPORT_PORT
 
@@ -163,5 +167,5 @@ EXPOSE $REDIS_PORT
 #########################################################################################################
 COPY script.d $DIR_HOME/script.d
 COPY docker-entrypoint.sh $DIR_HOME
-ENTRYPOINT ["/opt/src/docker-entrypoint.sh"]
+ENTRYPOINT ["bash","/opt/src/docker-entrypoint.sh"]
 # CMD ["/opt/src/docker-entrypoint.sh"]
